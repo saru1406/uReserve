@@ -15,7 +15,13 @@
                     <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    @can('manager-higher')
+                    <x-nav-link href="{{ route('events.index') }}" :active="request()->routeIs('events.index')">
+                        イベント管理
+                    </x-nav-link>
+                    @endcan
                 </div>
+
             </div>
 
             <div class="hidden sm:flex sm:items-center sm:ml-6">
