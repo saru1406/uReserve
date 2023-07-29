@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FormController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,4 +26,26 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
+});
+
+Route::controller(FormController::class)
+->prefix('form-test')->group(function(){
+    Route::get('register', 'register');
+});
+
+
+Route::prefix('user')
+->middleware('can:user-higher')
+->group(function() {
+    Route::get('index', function() {
+        return dd('user');
+    });
+});
+
+Route::prefix('manager')
+->middleware('can:manager-higher')
+->group(function() {
+    Route::get('index', function() {
+        return dd('manager');
+    });
 });
