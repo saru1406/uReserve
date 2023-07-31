@@ -4,4 +4,9 @@ namespace App\Repositories;
 
 interface EventRepositoryInterface
 {
+    public function eventCheck($date, $startTime, $endTime);
+
+    public function dateFormat($date, $time);
+
+    public function eventCreate($eventName, $information, $startTime, $endTime, $maxPeople, $isVisible);
 }

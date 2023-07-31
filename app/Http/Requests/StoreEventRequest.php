@@ -31,4 +31,39 @@ class StoreEventRequest extends FormRequest
             'is_visible' => ['required', 'boolean']
         ];
     }
+
+    public function getEventName()
+    {
+        return $this->input('event_name');
+    }
+
+    public function getInformation()
+    {
+        return $this->input('information');
+    }
+
+    public function getEventDate()
+    {
+        return $this->input('event_date');
+    }
+
+    public function getStartTime()
+    {
+        return $this->input('start_time');
+    }
+
+    public function getEndTime()
+    {
+        return $this->input('end_time');
+    }
+
+    public function getMaxPeople()
+    {
+        return $this->input('max_people');
+    }
+
+    public function getIsVisible()
+    {
+        return $this->input('is_visible');
+    }
 }
