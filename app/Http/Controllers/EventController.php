@@ -56,10 +56,10 @@ class EventController extends Controller
             return view('manager.events.create');
         }
 
-        $eventCreate = $this->eventService->eventCreate($eventName, $information, $eventDate, $startTime, $endTime, $maxPeople, $isVisible);
+        $this->eventService->eventCreate($eventName, $information, $eventDate, $startTime, $endTime, $maxPeople, $isVisible);
 
 
-        return to_route('events.index');
+        return to_route('events.index')->with(session()->flash('status', '登録完了'));
     }
 
     /**
@@ -67,7 +67,18 @@ class EventController extends Controller
      */
     public function show(Event $event)
     {
-        //
+        $event = Event::findOrFail($event->id);
+        // $eventDate = $event->eventDate;
+        // $startTime = $event->startTime;
+        // $endTime = $event->endTime;
+        return view('manager.events.show')
+            ->with([
+                'event' => $event,
+                // 'eventDate' => $eventDate,
+                // 'startTime' => $startTime,
+                // 'endTime' => $endTime
+            ]);
+        ;
     }
 
     /**
