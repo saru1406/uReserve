@@ -17,6 +17,11 @@ class EventService implements EventServiceInterface
         return $this->eventRepository->eventCheck($date, $startTime, $endTime);
     }
 
+    public function eventCount($date, $startTime, $endTime)
+    {
+        return $this->eventRepository->eventCount($date, $startTime, $endTime);
+    }
+
     public function dateFormat($date, $time)
     {
         $dataFormat = $date . " " . $time;
@@ -31,5 +36,12 @@ class EventService implements EventServiceInterface
         $startTime = $this->eventRepository->dateFormat($eventDate, $startTime);
         $endTime = $this->eventRepository->dateFormat($eventDate, $endTime);
         return $this->eventRepository->eventCreate($eventName, $information, $startTime, $endTime, $maxPeople, $isVisible);
+    }
+
+    public function eventUpdate($event, $eventName, $information, $eventDate, $startTime, $endTime, $maxPeople, $isVisible)
+    {
+        $startTime = $this->eventRepository->dateFormat($eventDate, $startTime);
+        $endTime = $this->eventRepository->dateFormat($eventDate, $endTime);
+        return $this->eventRepository->eventUpdate($event, $eventName, $information, $startTime, $endTime, $maxPeople, $isVisible);
     }
 }

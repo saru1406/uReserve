@@ -20,11 +20,12 @@ class EventController extends Controller
      */
     public function index()
     {
-        $events = Event::orderBy('start_date', 'asc')->paginate(10);
-        // $events = DB::table('events')
-        // ->orderBy('start_date', 'asc') //開始日時順
-        // ->paginate(10);
-        // dd($events);
+        $today = Carbon::today();
+        $events = DB::table('events')
+            ->whereDate('start_date', '>=', $today)
+            ->orderBy('start_date', 'desc')
+            ->paginate(10);
+
         return view('manager.events.index')->with(['events' => $events]);
     }
 
@@ -49,7 +50,7 @@ class EventController extends Controller
         $maxPeople = $request->getMaxPeople();
         $isVisible = $request->getIsVisible();
 
-        $check = $this->eventService->eventCheck($eventName, $startTime, $endTime);
+        $check = $this->eventService->eventCheck($eventDate, $startTime, $endTime);
 
         if($check) { // 存在したら
             session()->flash('status', 'この時間帯は既に他の予約が存在します。');
@@ -78,7 +79,6 @@ class EventController extends Controller
                 // 'startTime' => $startTime,
                 // 'endTime' => $endTime
             ]);
-        ;
     }
 
     /**
@@ -86,7 +86,10 @@ class EventController extends Controller
      */
     public function edit(Event $event)
     {
-        //
+        $editEventDate = $event->editEventDate;
+        $event = Event::findOrFail($event->id);
+
+        return view('manager.events.edit')->with(['event' => $event, 'editEventDate' => $editEventDate]);
     }
 
     /**
@@ -94,7 +97,24 @@ class EventController extends Controller
      */
     public function update(UpdateEventRequest $request, Event $event)
     {
-        //
+        $eventName = $request->getEventName();
+        $information = $request->getInformation();
+        $eventDate = $request->getEventDate();
+        $startTime = $request->getStartTime();
+        $endTime = $request->getEndTime();
+        $maxPeople = $request->getMaxPeople();
+        $isVisible = $request->getIsVisible();
+
+        $count = $this->eventService->eventCount($eventDate, $startTime, $endTime);
+
+        if($count > 1) {
+            session()->flash('status', 'この時間帯は既に他の予約が存在します。');
+            return to_route('events.edit', ['event'=>$event->id]);
+        }
+
+        $this->eventService->eventUpdate($event, $eventName, $information, $eventDate, $startTime, $endTime, $maxPeople, $isVisible);
+
+        return to_route('events.show', [$event->id])->with(session()->flash('status', '変更完了'));
     }
 
     /**
@@ -103,5 +123,18 @@ class EventController extends Controller
     public function destroy(Event $event)
     {
         //
+    }
+
+    public function past()
+    {
+        $today = Carbon::today();
+        $events = DB::table('events')
+            ->whereDate('start_date', '<', $today)
+            ->orderBy('start_date', 'desc')
+            ->paginate(10);
+
+        return view('manager.events.past')->with([
+            'events' => $events
+        ]);
     }
 }
